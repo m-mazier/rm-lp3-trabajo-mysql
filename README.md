@@ -59,3 +59,39 @@ curl -X POST http://localhost:8080/api/lp3/persona/ \
 curl -s http://localhost:8080/api/lp3/persona/ | jq
 # (Se recomienda tener instalado jq para visualizar mejor la respuesta JSON: sudo apt install jq)
 ```
+
+## Ejecución con Docker Compose
+
+Este proyecto incluye configuración para ejecutarse en contenedores Docker, orquestando la aplicación y la base de datos automáticamente.
+
+### Requisitos
+
+* Docker y Docker Compose instalados.
+
+### Paso a Paso
+
+1. **Configurar credenciales:**
+Crear un archivo ```.env``` en la raíz del proyecto tomando como base el ejemplo:
+```bash
+cp env.sample .env
+```
+
+(El archivo .env ya está configurado con credenciales por defecto funcionales).
+
+2. **Iniciar la aplicación:**
+Ejecutar el siguiente comando para construir y levantar los servicios:
+```bash
+docker compose up --build
+```
+
+3. **Acceso:**
+
+* **API Spring Boot:** Disponible en ```http://localhost:8081/api/lp3/persona/``` (Note el puerto 8081).
+
+* **Base de Datos:** Accesible desde el host en el puerto **3307.**
+
+4. **Detener:**
+Para apagar los contenedores:
+```bash
+docker compose down
+```
