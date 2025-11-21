@@ -1,61 +1,49 @@
-# Trabajo Práctico LP3 - Spring Boot con MySQL
+# Trabajo Práctico LP3 - Spring Boot con Docker
 
-Este proyecto es una adaptación del template de LP3 para utilizar persistencia de datos en **MySQL**.
+Este proyecto es una aplicación Spring Boot con base de datos MySQL, orquestada completamente con Docker Compose.
 
-> **Nota:** Se ha migrado la base de datos original (H2) a MySQL Server 8.
+> **Nota:** Gracias a Docker, no es necesario instalar Java ni MySQL localmente.
 
 ## Requisitos Previos
 
-* **Java JDK 17** o superior.
-* **MySQL Server 8.0** instalado y corriendo.
-* **Maven** (incluido en el wrapper `./mvnw`).
+* **Docker** y **Docker Compose** instalados y corriendo.
 
-## Configuración de Base de Datos
+## Configuración Inicial
 
-Antes de ejecutar la aplicación, es necesario crear la base de datos y el usuario en MySQL para que la conexión funcione.
-
-1.  Ingrese a su consola de MySQL:
+1.  Clonar el repositorio.
+2. Crear el archivo de variables de entorno ```.env``` basado en la plantilla:
     ```bash
-    sudo mysql
+    cp env.sample .env
     ```
-
-2.  Ejecute los siguientes comandos SQL para preparar el entorno:
-    ```sql
-    -- Crear la base de datos
-    CREATE DATABASE lp3_db;
-
-    -- Crear el usuario (coincide con application.properties)
-    CREATE USER 'alumno'@'localhost' IDENTIFIED BY 'secreto';
-
-    -- Dar permisos totales
-    GRANT ALL PRIVILEGES ON lp3_db.* TO 'alumno'@'localhost';
-    FLUSH PRIVILEGES;
-    EXIT;
-    ```
+   (El archivo ```.env``` ya viene configurado con credenciales por defecto funcionales).
 
 ## Ejecución
 
-1.  Clonar este repositorio.
-2.  Abrir el proyecto en **IntelliJ IDEA** (o su IDE de preferencia).
-3.  Permitir que Maven descargue las dependencias (Drivers, Spring, etc.).
-4.  Ejecutar la clase principal: `src/main/java/py/edu/uc/lp3/Application.java`.
+Para descargar dependencias, compilar el código, levantar la base de datos e iniciar la aplicación, ejecute un solo comando:
+```bash
+docker compose up --build
+```
 
-La aplicación iniciará en el puerto **8080**.
-Las tablas (`persona`, `empresa`, etc.) se crearán automáticamente al iniciar.
+* **API Spring Boot:** Disponible en el puerto **8081**.
+* **MySQL:** Disponible en el puerto **3307**.
 
-## Pruebas de la API (Testing)
+## Pruebas (Testing)
 
-Para verificar que la aplicación guarda y recupera datos correctamente de MySQL, puede utilizar `curl` desde la terminal.
+Una vez que la aplicación inicie (verifique que diga ```Started Application``` en la consola), puede probarla desde otra terminal:
 
 ### 1. Insertar una Persona (POST)
 ```bash
-# Nota: La barra final '/' es requerida por la configuración del controlador
-curl -X POST http://localhost:8080/api/lp3/persona/ \
+curl -X POST http://localhost:8081/api/lp3/persona/ \
   -H 'Content-Type: application/json' \
-  -d '{"nombre": "Test", "apellido": "User", "edad": 30, "numeroCedula": 12345, "sexo": "M"}'
+  -d '{"nombre": "Docker", "apellido": "User", "edad": 20, "numeroCedula": 123, "sexo": "M"}'
 ```
 ### 2. Listar Personas (GET)
 ```bash
-curl -s http://localhost:8080/api/lp3/persona/ | jq
-# (Se recomienda tener instalado jq para visualizar mejor la respuesta JSON: sudo apt install jq)
+curl -s http://localhost:8081/api/lp3/persona/ | jq
+```
+## Detener
+
+Para apagar y limpiar los contenedores:
+```bash
+docker compose down
 ```
